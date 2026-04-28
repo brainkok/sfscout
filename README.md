@@ -16,35 +16,26 @@ A security auditing and data exfiltration tool for Salesforce Experience Cloud. 
 
 ## Installation
 
-### pipx (recommended)
-
-```
-pipx install .
-```
-
-### Manual
-
 Requires Python 3.10+.
 
 ```
 git clone <repo-url>
 cd sfscout
 python -m venv .venv
-.venv\Scripts\activate        # Windows
-# source .venv/bin/activate   # Linux / macOS
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
 ## Usage
 
 ```
-python src/sfscout.py -h
+python sfscout.py -h
 ```
 
 ### Guest context (unauthenticated)
 
 ```
-python src/sfscout.py -u https://target.my.salesforce.com -o ./output --html
+python sfscout.py -u https://target.my.salesforce.com -o ./output --html
 ```
 
 ### Authenticated context
@@ -52,13 +43,13 @@ python src/sfscout.py -u https://target.my.salesforce.com -o ./output --html
 Supply session cookies:
 
 ```
-python src/sfscout.py -u https://target.my.salesforce.com -c "sid=ABC123; ..." -o ./output --html
+python sfscout.py -u https://target.my.salesforce.com -c "sid=ABC123; ..." -o ./output --html
 ```
 
 Or provide a captured raw HTTP request file:
 
 ```
-python src/sfscout.py -r request.txt -o ./output --html
+python sfscout.py -r request.txt -o ./output --html
 ```
 
 ## Options
