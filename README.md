@@ -107,6 +107,23 @@ The author assumes no liability and is not responsible for any misuse or damages
 
 Use at your own risk.
 
+## Credits
+
+This project is based on prior work by Google LLC, licensed under the Apache License 2.0.
+
+Significant modifications and extensions have been made, including:
+- Rewritten core logic (AuraProbe)
+- Record extraction and pagination
+- Permission analysis (CRUD)
+- HTML report generation
+- Improved endpoint and context discovery
+- Enhanced logging and error handling
+
 ## License
 
-This project is licensed under the MIT License – see the LICENSE file for details.
+This project is licensed under the Apache License 2.0.
+
+- Original portions: Copyright 2025 Google LLC  
+- Modifications: Copyright 2026 Brain Kok
+
+See the LICENSE file for details.
