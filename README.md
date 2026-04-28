@@ -93,3 +93,16 @@ output/
 ## Multiple apps
 
 A single Salesforce instance may host multiple Experience Cloud apps (e.g. `/myApp/s`). Use `--app /myApp` to target a specific one, and run the tool separately per app.
+
+## Ethical Use Disclaimer
+
+This project is provided for educational, research, and defensive security purposes only.
+
+You agree NOT to use this tool for:
+- Unauthorized access to systems or data
+- Any illegal activity
+- Harassment, exploitation, or harm of individuals or organizations
+
+The author assumes no liability and is not responsible for any misuse or damages caused by this software.
+
+Use at your own risk.
