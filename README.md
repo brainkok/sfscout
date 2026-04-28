@@ -106,3 +106,7 @@ You agree NOT to use this tool for:
 The author assumes no liability and is not responsible for any misuse or damages caused by this software.
 
 Use at your own risk.
+
+## License
+
+This project is licensed under the MIT License – see the LICENSE file for details.
