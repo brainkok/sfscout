@@ -19,7 +19,7 @@ A security auditing and data exfiltration tool for Salesforce Experience Cloud. 
 Requires Python 3.10+.
 
 ```
-git clone <repo-url>
+git clone https://github.com/brainkok/sfscout.git
 cd sfscout
 python -m venv .venv
 source .venv/bin/activate
