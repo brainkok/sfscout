@@ -1,3 +1,6 @@
+# Copyright 2025 Google LLC
+# Modifications Copyright 2026 Brain Kok
+
 import requests
 import re
 import json
