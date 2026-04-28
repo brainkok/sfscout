@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SFScout Report — https://demo.my.salesforce.com</title>
+<style>
+  :root {
+    --bg:      #0f1117;
+    --surface: #1a1d27;
+    --border:  #2d3047;
+    --accent:  #4f8ef7;
+    --text:    #e2e8f0;
+    --muted:   #718096;
+    --red:     #fc8181;
+    --orange:  #f6ad55;
+    --green:   #68d391;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px; line-height: 1.6;
+  }
+  a { color: var(--accent); }
+  header {
+    padding: 2rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+  header h1 { font-size: 1.4rem; color: var(--accent); font-weight: 700; }
+  .meta { color: var(--muted); font-size: 0.82rem; margin-top: 0.3rem; }
+  nav {
+    padding: 0.75rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 0.82rem;
+    display: flex; gap: 1.5rem; flex-wrap: wrap;
+  }
+  nav a { color: var(--muted); text-decoration: none; }
+  nav a:hover { color: var(--text); }
+  main { max-width: 1280px; margin: 0 auto; padding: 2rem 2.5rem; }
+  section {
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  section h2 {
+    font-size: 0.9rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted);
+    padding: 0.8rem 1.25rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  section > *:not(h2) { padding: 1.25rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th {
+    text-align: left; padding: 0.5rem 1rem;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    color: var(--muted); font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  td { padding: 0.45rem 1rem; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .badge {
+    display: inline-block; padding: 0.1rem 0.5rem;
+    border-radius: 4px; font-size: 0.75rem; font-weight: 600;
+  }
+  .badge.danger  { background: rgba(252,129,129,.15); color: var(--red); }
+  .badge.warn    { background: rgba(246,173, 85,.15); color: var(--orange); }
+  .badge.ok      { background: rgba(104,211,145,.15); color: var(--green); }
+  .badge.muted   { background: rgba(113,128,150,.10); color: var(--muted); }
+  details { border-top: 1px solid var(--border); }
+  details:first-of-type { border-top: none; }
+  summary {
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    font-size: 0.88rem; font-weight: 500;
+    background: var(--surface);
+    user-select: none;
+  }
+  summary:hover { background: var(--border); }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  .detail-body { padding: 0; }
+  .table-wrap { overflow-x: auto; max-height: 500px; overflow-y: auto; }
+  .tag {
+    display: inline-block;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 0.15rem 0.5rem; border-radius: 4px;
+    font-size: 0.75rem; margin: 0.15rem; font-family: monospace;
+  }
+  code { font-family: monospace; font-size: 0.8rem; color: var(--muted); }
+  .empty { color: var(--muted); font-style: italic; font-size: 0.88rem; }
+  ul { padding-left: 1.25rem; }
+  li { margin-bottom: 0.3rem; font-size: 0.85rem; }
+  p { margin-bottom: 0.5rem; }
+  .rec-toolbar {
+    padding: 0.75rem 1.25rem 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .rec-search {
+    width: 100%; max-width: 400px;
+    padding: 0.4rem 0.75rem;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 4px;
+    font-size: 0.85rem; margin-bottom: 0.75rem;
+  }
+  .rec-search:focus { outline: none; border-color: var(--accent); }
+  tr.hidden { display: none; }
+  @media (max-width: 700px) {
+    header, main, nav { padding-left: 1rem; padding-right: 1rem; }
+  }
+</style>
+<script>
+  function filterTable(input) {
+    var q = input.value.toLowerCase();
+    var tbody = input.closest('details').querySelector('tbody');
+    tbody.querySelectorAll('tr').forEach(function(row) {
+      row.classList.toggle('hidden', !row.textContent.toLowerCase().includes(q));
+    });
+  }
+  function toggleAll() {
+    var details = document.querySelectorAll('#records details');
+    var allOpen = Array.from(details).every(function(d) { return d.open; });
+    details.forEach(function(d) { d.open = !allOpen; });
+    document.querySelector('#records button').textContent = allOpen ? 'Expand all' : 'Collapse all';
+  }
+</script>
+</head>
+<body>
+<header>
+  <div>
+    <h1>SFScout — Scan Report</h1>
+    <div class="meta">
+      Target: <strong>https://demo.my.salesforce.com</strong>
+      &nbsp;·&nbsp;
+      Scanned: <strong>2026-04-28 14:32:07</strong>
+      &nbsp;·&nbsp;
+      v1.0.0
+    </div>
+  </div>
+</header>
+<nav>
+  <a href="#summary">Summary</a>
+  <a href="#gql">GraphQL</a>
+  <a href="#permissions">Permissions</a>
+  <a href="#records">Records</a>
+  <a href="#controllers">Controllers</a>
+  <a href="#csp">CSP</a>
+  <a href="#lists">Record Lists</a>
+  <a href="#homeurls">Home URLs</a>
+</nav>
+<main>
+
+<section id="summary">
+<h2>Record Summary (Aura)</h2>
+<table><thead><tr><th>Object</th><th>Total Count</th><th>Fetched</th></tr></thead><tbody>
+<tr><td>Account</td><td><span class="badge ok">3</span></td><td>3 fetched</td></tr>
+<tr><td>Contact</td><td><span class="badge ok">2</span></td><td>2 fetched</td></tr>
+</tbody></table>
+</section>
+
+<section id="gql">
+<h2>Record Summary (GraphQL)</h2>
+<table><thead><tr><th>Object</th><th>Total Count</th><th>Fetched</th></tr></thead><tbody>
+<tr><td>User</td><td><span class="badge ok">2</span></td><td>2 fetched</td></tr>
+</tbody></table>
+</section>
+
+<section id="permissions">
+<h2>Object Permissions</h2>
+<table><thead><tr><th>Object</th><th>Create</th><th>Update</th><th>Delete</th></tr></thead><tbody>
+<tr><td>Contact</td><td><span class="badge danger">YES</span></td><td><span class="badge danger">YES</span></td><td><span class="badge muted">—</span></td></tr>
+<tr><td>Lead</td><td><span class="badge danger">YES</span></td><td><span class="badge danger">YES</span></td><td><span class="badge danger">YES</span></td></tr>
+</tbody></table>
+</section>
+
+<section id="records">
+<h2>Fetched Records</h2>
+<button onclick="toggleAll()" style="margin-bottom:1rem;padding:0.4rem 1rem;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:4px;cursor:pointer;">Collapse all</button>
+
+<details open>
+  <summary>Account — 3 records</summary>
+  <div class="detail-body">
+    <div class="rec-toolbar">
+      <input class="rec-search" placeholder="Filter records…" oninput="filterTable(this)" />
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Id</th><th>Name</th><th>Phone</th><th>BillingCity</th><th>Type</th></tr></thead><tbody>
+        <tr><td>001A000001abc</td><td>Acme Corp</td><td>020-1234567</td><td>Amsterdam</td><td>Customer</td></tr>
+        <tr><td>001A000002def</td><td>TechNL BV</td><td>010-9876543</td><td>Rotterdam</td><td>Partner</td></tr>
+        <tr><td>001A000003ghi</td><td>Startup ABC</td><td></td><td>Utrecht</td><td>Prospect</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</details>
+
+<details open>
+  <summary>Contact — 2 records</summary>
+  <div class="detail-body">
+    <div class="rec-toolbar">
+      <input class="rec-search" placeholder="Filter records…" oninput="filterTable(this)" />
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Id</th><th>FirstName</th><th>LastName</th><th>Email</th><th>Title</th></tr></thead><tbody>
+        <tr><td>003A000001jkl</td><td>Jan</td><td>Jansen</td><td>jan@acme.com</td><td>CEO</td></tr>
+        <tr><td>003A000002mno</td><td>Petra</td><td>de Vries</td><td>petra@technl.nl</td><td>CTO</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</details>
+
+<details open>
+  <summary>User — 2 records</summary>
+  <div class="detail-body">
+    <div class="rec-toolbar">
+      <input class="rec-search" placeholder="Filter records…" oninput="filterTable(this)" />
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Id</th><th>Name</th><th>Email</th><th>IsActive</th><th>Profile</th></tr></thead><tbody>
+        <tr><td>005A000001pqr</td><td>Admin User</td><td>admin@org.com</td><td>True</td><td>System Administrator</td></tr>
+        <tr><td>005A000002stu</td><td>Guest User</td><td>guest@org.com</td><td>True</td><td>Guest License User</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</details>
+
+</section>
+
+<section id="controllers">
+<h2>Custom Controllers</h2>
+<p><code>https://demo.my.site.com/s/resource/MyApp.js</code></p>
+<p>
+  <span class="tag">apex://MyCustomController/ACTION$getData</span>
+  <span class="tag">apex://MyCustomController/ACTION$saveRecord</span>
+</p>
+</section>
+
+<section id="csp">
+<h2>CSP Trusted Sites</h2>
+<span class="tag">https://maps.googleapis.com</span>
+<span class="tag">https://cdn.jsdelivr.net</span>
+<span class="tag">https://fonts.gstatic.com</span>
+</section>
+
+<section id="lists">
+<h2>Accessible Record List URLs</h2>
+<ul>
+  <li><a href="https://demo.my.site.com/s/recordlist/Account/Default" target="_blank">https://demo.my.site.com/s/recordlist/Account/Default</a></li>
+  <li><a href="https://demo.my.site.com/s/recordlist/Contact/Default" target="_blank">https://demo.my.site.com/s/recordlist/Contact/Default</a></li>
+</ul>
+</section>
+
+<section id="homeurls">
+<h2>Object Home URLs</h2>
+<ul>
+  <li><strong>Account</strong>: <a href="https://demo.my.site.com/s/account" target="_blank">https://demo.my.site.com/s/account</a></li>
+  <li><strong>Contact</strong>: <a href="https://demo.my.site.com/s/contact" target="_blank">https://demo.my.site.com/s/contact</a></li>
+</ul>
+</section>
+
+</main>
+</body>
+</html>
